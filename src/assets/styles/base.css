@@ -1,0 +1,19 @@
+html,body,div,article,header,nav,aside,section,footer,span,ul,li,p,h1,h2,h3,h4,h5,h6 {
+  margin: 0;
+  padding: 0;
+  font-family: "Microsoft Yahei",sans-serif;
+}
+a, a:hover {
+  text-decoration: none;
+}
+ul, ol {
+  list-style: none;
+}
+input[type=submit], input[type=text], input[type=password], input[type=button], textarea, select {
+  outline: none;
+}
+
+.fillcontain{
+  height: 100%;
+  width: 100%;
+}
