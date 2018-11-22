@@ -2,16 +2,16 @@
   <el-container>
     <el-header class="header-container">
       <span>后台管理系统</span>
-        <el-dropdown class="user-info" trigger="click">
-          <span class="el-dropdown-link">
-            Admin
-            <i class="el-icon-arrow-down el-icon--right"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>用户信息</el-dropdown-item>
-            <el-dropdown-item>退出登录</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+      <el-dropdown class="user-info" trigger="click" @command="handleCommand">
+        <span class="el-dropdown-link">
+          Admin
+          <i class="el-icon-arrow-down el-icon--right"></i>
+        </span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item>用户信息</el-dropdown-item>
+          <el-dropdown-item command="singout">退出登录</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </el-header>
     <el-container>
       <el-aside class="side-container">
@@ -108,6 +108,28 @@
       },
       handleClose(key, keyPath) {
         console.log(key, keyPath);
+      },
+      handleCommand(command) {
+        if (command === 'singout') {
+          this.$axios.get('http://elm.cangdu.org/admin/singout')
+            .then(response => {
+                console.log(response)
+              if (response.data.status === 1) {
+                this.$message({
+                  type: 'success',
+                  message: '退出登录'
+                })
+                this.$router.push('/')
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: '退出登录失败'
+                })
+              }
+            }).then(error => {
+              console.log(error);
+            })
+        }
       }
     }
   }

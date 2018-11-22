@@ -4,8 +4,8 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 const login = r => require.ensure([], ()=> r(require('@/pages/login')), 'login');
-const manage = r => require.ensure([], ()=> r(require('@/pages/manage')), 'manage');
-const home = r => require.ensure([], ()=> r(require('@/pages/home')), 'home');
+const home = r => require.ensure([], ()=> r(require('@/pages/home/main')), 'home');
+const index = r => require.ensure([], ()=> r(require('@/pages/home/index')), 'index');
 const userList = r => require.ensure([], ()=> r(require('@/pages/user/list')), 'userList')
 const merchantList = r => require.ensure([], ()=> r(require('@/pages/merchant/list')), 'merchantList')
 
@@ -15,13 +15,13 @@ const routes = [
     component: login
   },
   {
-    path: '/manage',
-    component: manage,
+    path: '/home',
+    component: home,
     name: '',
     children: [
       {
         path: '',
-        component: home,
+        component: index,
         meta: []
       },
       {
