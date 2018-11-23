@@ -1,10 +1,9 @@
 <template>
   <el-container>
     <el-header class="header-container">
-      <span>后台管理系统</span>
+      <span>ADMIN</span>
       <el-dropdown class="user-info" trigger="click" @command="handleCommand">
-        <span class="el-dropdown-link">
-          Admin
+        <span class="el-dropdown-link" v-if="this.$store.state.user">{{this.$store.state.user.user_name}}
           <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
@@ -19,7 +18,7 @@
           <el-col>
             <el-menu :default-active="defaultActive" class="menu-container" @open="handleOpen" @close="handleClose"
               background-color="#545c64" text-color="#fff" active-text-color="#20a0ff" router>
-              <el-menu-item index="manage">
+              <el-menu-item index="home">
                 <i class="el-icon-menu"></i>
                 <span slot="title">首页</span>
               </el-menu-item>
@@ -96,6 +95,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
   export default {
     computed: {
       defaultActive: function () {
@@ -103,6 +103,7 @@
       }
     },
     methods: {
+        ...mapActions(['logout']),
       handleOpen(key, keyPath) {
         console.log(key, keyPath);
       },
@@ -113,12 +114,13 @@
         if (command === 'singout') {
           this.$axios.get('http://elm.cangdu.org/admin/singout')
             .then(response => {
-                console.log(response)
               if (response.data.status === 1) {
                 this.$message({
                   type: 'success',
                   message: '退出登录'
                 })
+                this.logout()
+                sessionStorage.removeItem('user')
                 this.$router.push('/')
               } else {
                 this.$message({
@@ -126,7 +128,7 @@
                   message: '退出登录失败'
                 })
               }
-            }).then(error => {
+            }).catch(error => {
               console.log(error);
             })
         }

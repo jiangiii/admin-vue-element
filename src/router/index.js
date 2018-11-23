@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '../store'
 
 Vue.use(Router)
 
@@ -18,6 +19,13 @@ const routes = [
     path: '/home',
     component: home,
     name: '',
+    beforeEnter: (to, from, next) => {
+      if (store.state.user) {
+        next()
+      } else {
+        next({path: '/'})
+      }
+    },
     children: [
       {
         path: '',

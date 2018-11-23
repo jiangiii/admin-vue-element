@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <el-card class="box-card login-scope" v-show="showLogin"> 
+    <el-card class="box-card login-scope" v-show="showLogin">
       <el-row>
         <el-col class="tip">
           <div class="grid-content">后台管理系统</div>
@@ -14,7 +14,7 @@
           <el-input v-model="loginForm.password" type="password"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="custom-btn" type="primary" @click="onSubmit('loginForm')">登录</el-button>
+          <el-button class="custom-btn" type="primary" :loading="logining" @click="onSubmit('loginForm')">登录</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -22,8 +22,7 @@
 </template>
 
 <script>
-  import {mapActions, mapState} from 'vuex'
-  
+  import { mapActions, mapState } from 'vuex'
   export default {
     data() {
       return {
@@ -32,37 +31,48 @@
           password: ''
         },
         loginRules: {
-          username: [
-            {
-              required: true,
-              message: '请输入用户名',
-              trigger: blur
-            }
-          ],
-          password: [
-            {
-              required: true,
-              message: '请输入密码',
-              trigger: blur
-            }
-          ]
+          username: [{
+            required: true,
+            message: '请输入用户名',
+            trigger: blur
+          }],
+          password: [{
+            required: true,
+            message: '请输入密码',
+            trigger: blur
+          }]
         },
+        logining: false,
         showLogin: false
       }
     },
+    watch: {
+
+    },
+    mounted() {
+      this.showLogin = true
+    },
+    computed: {
+      ...mapState(['user'])
+    },
     methods: {
+      ...mapActions(['login']),
       async onSubmit(loginForm) {
-        this.$refs[loginForm].validate(async(valid)=> {
+        this.$refs[loginForm].validate(async (valid) => {
           if (valid) {
-            this.$axios.post('http://elm.cangdu.org/admin/login', {
+            this.logining = true;
+            let user = {
               user_name: this.loginForm.username,
               password: this.loginForm.password
-            }).then(result => {
+            }
+            this.$axios.post('http://elm.cangdu.org/admin/login', user).then(result => {
               if (result.data.status === 1) {
+                this.login(user)
                 this.$message({
                   type: 'success',
                   message: '登录成功'
                 })
+                sessionStorage.setItem('user', JSON.stringify(user));
                 this.$router.push('home')
               } else {
                 this.$message({
@@ -79,30 +89,10 @@
               message: '请输入正确的用户名密码',
               offset: 100
             });
-           return false;
+            return false;
           }
         })
       }
-    },
-    watch: {
-      adminInfo: function (newValue) {
-        if (newValue.id) {
-          this.$message({
-            type: 'success',
-            message: '检测到您之前登录过，将自动登录'
-          });
-          this.$router.push('home')
-        }
-      }
-    },
-    mounted() {
-      this.showLogin = true
-      // if (!this.adminInfo.id) {
-      //   this.getAdminData()
-      // }
-    },
-    computed: {
-      // ...mapState(['adminInfo'])
     }
   }
 </script>
@@ -122,15 +112,17 @@
       margin-bottom: 15px;
       border-radius: 5px;
     }
+
     .login-scope {
       width: 380px;
     }
+
     .custom-btn {
       width: 75%;
     }
   }
 
-  .l-h(@size){
+  .l-h(@size) {
     height: @size;
     line-height: @size;
   }

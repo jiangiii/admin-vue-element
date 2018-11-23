@@ -3,7 +3,7 @@
     <Header></Header>
     <div class="list-container">
       <section class="search-from">
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
+        <!-- <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="姓名">
             <el-input v-model="formInline.user" placeholder="姓名"></el-input>
           </el-form-item>
@@ -16,18 +16,22 @@
           <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>
           </el-form-item>
-        </el-form>
+        </el-form> -->
       </section>
-      <el-table class="listing" :data="tableData" stripe style="width: 100%">
-        <el-table-column prop="date" label="日期" width="180">
+      <el-table class="listing" :data="userList" stripe style="width: 100%">
+        <el-table-column prop="username" label="用户名" width="180">
         </el-table-column>
-        <el-table-column prop="name" label="姓名" width="180">
+        <el-table-column prop="registe_time" label="日期" width="180">
         </el-table-column>
-        <el-table-column prop="address" label="地址">
+        <el-table-column prop="city" label="地址">
         </el-table-column>
       </el-table>
       <section class="pagination-bar">
-        <el-pagination background layout="prev, pager, next" :page-size="1" :total="3">
+        <el-pagination background layout="total, prev, pager, next" 
+        :page-size="limit" 
+        :total="userCount"
+        :current-page="currentPage"
+        @current-change="handleCurrentChange">
         </el-pagination>
       </section>
     </div>
@@ -37,42 +41,49 @@
 <script>
   import Header from '../../components/Header'
   export default {
-    created() {},
+    created() {
+      this.initData();
+    },
     data() {
       return {
         formInline: {
           user: '',
           region: ''
         },
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }],
-        count: 0
+        userCount: 0,
+        userList: [],
+        limit: 12,
+        currentPage: 1,
+        offset: 0
       }
     },
     components: {
       Header
     },
     methods: {
-      onSubmit() {
-        console.log('submit!');
+      initData() {
+        this.$axios.get('http://elm.cangdu.org/v1/users/count').then(response => {
+          if (response.data.status === 1) {
+            this.userCount = response.data.count
+          }
+        }).catch(error => {
+          console.log(error)
+        });
+        this.userData();
       },
-      async initCount() {
-
+      handleCurrentChange(page) {
+        this.currentPage = page;
+        this.offset = (page - 1)*this.limit;
+        this.userData()
+      },
+      userData() {
+        this.$axios.get('http://elm.cangdu.org/v1/users/list', {params: {offset: this.offset, limit: this.limit}}).then(response => {
+          if (response.status === 200) {
+            this.userList = response.data
+          }
+        }).catch(error => {
+          console.log(error)
+        });
       }
     }
   }
@@ -90,6 +101,7 @@
       padding: 20px;
       text-align: center;
     }
+
     .search-from {
       padding: 0 20px;
       border-radius: 3px;
