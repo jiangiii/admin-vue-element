@@ -53,10 +53,10 @@
       this.showLogin = true
     },
     computed: {
-      ...mapState(['user'])
+      ...mapState(['user', 'logined'])
     },
     methods: {
-      ...mapActions(['login']),
+      ...mapActions(['loginAction']),
       async onSubmit(loginForm) {
         this.$refs[loginForm].validate(async (valid) => {
           if (valid) {
@@ -67,12 +67,12 @@
             }
             this.$axios.post('http://elm.cangdu.org/admin/login', user).then(result => {
               if (result.data.status === 1) {
-                this.login(user)
+                sessionStorage.setItem('user', JSON.stringify(user));
+                this.loginAction()
                 this.$message({
                   type: 'success',
                   message: '登录成功'
                 })
-                sessionStorage.setItem('user', JSON.stringify(user));
                 this.$router.push('home')
               } else {
                 this.$message({

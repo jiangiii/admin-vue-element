@@ -16,7 +16,7 @@
       <el-aside class="side-container">
         <el-row>
           <el-col>
-            <el-menu :default-active="defaultActive" class="menu-container" @open="handleOpen" @close="handleClose"
+            <el-menu :default-active="defaultActive" @open="handleOpen" @close="handleClose"
               background-color="#545c64" text-color="#fff" active-text-color="#20a0ff" router>
               <el-menu-item index="home">
                 <i class="el-icon-menu"></i>
@@ -147,12 +147,6 @@ import { mapActions } from 'vuex'
 
   .side-container {
     width: 220px !important;
-  }
-
-  .menu-container {
-    min-height: 100vh;
-    background: rgb(84, 92, 100);
-    border-right: 1px solid #e6e6e6;
   }
 
   .user-info {

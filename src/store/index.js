@@ -4,20 +4,24 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const state = {
-	user: undefined
+	user: undefined,
+	logined: 0
 }
 
 const mutations = {
 	login(state, player) {
 		state.user = player
+		state.logined = 1
 	},
 	logout(state) {
 		state.user = undefined
+		state.logined = 0
 	}
 }
 
 const actions = {
-	login(context, player) {
+	loginAction(context) {
+		let player = sessionStorage.getItem('user')
 		context.commit('login', player)
 	},
 	logout(context) {
